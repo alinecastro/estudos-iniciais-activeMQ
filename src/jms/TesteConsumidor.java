@@ -16,6 +16,19 @@ public class TesteConsumidor {
         Session sessao = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
 
         Destination fila = (Destination) context.lookup("financeiro");
+
+        produtor(sessao, fila);
+
+        consumidor(sessao, fila);
+
+        new Scanner(System.in).nextLine();
+
+        sessao.close();
+        connection.close();
+        context.close();
+    }
+
+    private static void consumidor(Session sessao, Destination fila) throws JMSException {
         MessageConsumer messageConsumer = sessao.createConsumer(fila);
         messageConsumer.setMessageListener(msn -> {
             TextMessage textMessage = (TextMessage) msn;
@@ -25,12 +38,15 @@ public class TesteConsumidor {
                 e.printStackTrace();
             }
         });
+    }
 
-        new Scanner(System.in).nextLine();
+    private static void produtor(Session sessao, Destination fila) throws JMSException {
+        MessageProducer messageProducer = sessao.createProducer(fila);
+        messageProducer.setDeliveryMode(DeliveryMode.NON_PERSISTENT);
 
-        sessao.close();
-        connection.close();
-        context.close();
+        TextMessage msnProducer = sessao.createTextMessage("eu enviei de novo");
+        messageProducer.send(msnProducer);
+        System.out.println("msn enviada");
     }
 
     private static Connection createConnection() throws NamingException, JMSException {
