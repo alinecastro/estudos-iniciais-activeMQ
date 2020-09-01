@@ -4,7 +4,7 @@ import javax.jms.*;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import java.util.Scanner;
-
+//classe para consumo e produçao
 public class TesteConsumidor {
     public static void main(String[] args) throws Exception {
         InitialContext context = new InitialContext();
